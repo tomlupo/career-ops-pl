@@ -123,8 +123,25 @@ Patrones de extracción por portal:
 - **Ashby**: `"Senior AI PM (Remote) @ EverAI"` → title: `Senior AI PM`, company: `EverAI`
 - **Greenhouse**: `"AI Engineer at Anthropic"` → title: `AI Engineer`, company: `Anthropic`
 - **Lever**: `"Product Manager - AI @ Temporal"` → title: `Product Manager - AI`, company: `Temporal`
+- **LinkedIn**: `"AI Engineer - Anthropic | LinkedIn"` → title: `AI Engineer`, company: `Anthropic` (strip ` | LinkedIn` suffix)
+- **Pracuj.pl**: `"AI Engineer - Warszawa - Acme Corp - Pracuj.pl"` → title: `AI Engineer`, company: `Acme Corp` (strip ` - Pracuj.pl` suffix, location is middle segment)
 
 Regex genérico: `(.+?)(?:\s*[@|—–-]\s*|\s+at\s+)(.+?)$`
+
+### Notas específicas por portal
+
+**LinkedIn:**
+- Individual job URLs (`linkedin.com/jobs/view/{id}`) are publicly accessible without login
+- Search result pages require login — use WebSearch `site:linkedin.com/jobs` to discover individual URLs
+- Strip `?trk=...` and other tracking parameters from URLs before dedup
+- Apply button text: "Apply", "Easy Apply"
+
+**Pracuj.pl:**
+- URLs follow pattern: `pracuj.pl/praca/{title-slug},{company-slug},{offer-id}.html`
+- Listings are in Polish or English depending on the employer
+- Apply button text: "Aplikuj", "Aplikuj szybko", "Apply"
+- Expired patterns: "Oferta wygasła", "Ogłoszenie nieaktualne", "Oferta jest nieaktualna"
+- Filter by location in URL params: `?wp=remote` for remote, `?wp={city}` for city
 
 ## URLs privadas
 
@@ -170,6 +187,8 @@ Cada empresa en `tracked_companies` debe tener `careers_url` — la URL directa 
 - **Ashby:** `https://jobs.ashbyhq.com/{slug}`
 - **Greenhouse:** `https://job-boards.greenhouse.io/{slug}` o `https://job-boards.eu.greenhouse.io/{slug}`
 - **Lever:** `https://jobs.lever.co/{slug}`
+- **LinkedIn:** `https://www.linkedin.com/jobs/view/{job-id}` (individual listing, public)
+- **Pracuj.pl:** `https://www.pracuj.pl/praca/{slug},{offer-id}.html`
 - **Custom:** La URL propia de la empresa (ej: `https://openai.com/careers`)
 
 **Si `careers_url` no existe** para una empresa:

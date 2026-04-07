@@ -32,6 +32,9 @@ const EXPIRED_PATTERNS = [
   /search for jobs page is loaded/i, // Workday SPA indicator for listing page
   /diese stelle (ist )?(nicht mehr|bereits) besetzt/i,
   /offre (expirée|n'est plus disponible)/i,
+  /oferta wygas[łl]a/i,                   // Pracuj.pl: "Oferta wygasła"
+  /og[łl]oszenie nieaktualne/i,            // Pracuj.pl: "Ogłoszenie nieaktualne"
+  /oferta jest nieaktualna/i,              // Pracuj.pl: "Oferta jest nieaktualna"
 ];
 
 // URL patterns that indicate an ATS has redirected away from the job (closed/expired)
@@ -48,6 +51,7 @@ const APPLY_PATTERNS = [
   /easy apply/i,
   /start application/i,  // Ashby
   /ich bewerbe mich/i,   // German Greenhouse
+  /\baplikuj\b/i,        // Pracuj.pl
 ];
 
 // Below this length the page is probably just nav/footer (closed ATS page)
