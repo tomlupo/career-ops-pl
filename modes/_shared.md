@@ -48,12 +48,12 @@ Classify every offer into one of these types (or hybrid of 2):
 
 | Archetype | Key signals in JD |
 |-----------|-------------------|
-| AI Platform / LLMOps | "observability", "evals", "pipelines", "monitoring", "reliability" |
-| Agentic / Automation | "agent", "HITL", "orchestration", "workflow", "multi-agent" |
-| Technical AI PM | "PRD", "roadmap", "discovery", "stakeholder", "product manager" |
-| AI Solutions Architect | "architecture", "enterprise", "integration", "design", "systems" |
-| AI Forward Deployed | "client-facing", "deploy", "prototype", "fast delivery", "field" |
-| AI Transformation | "change management", "adoption", "enablement", "transformation" |
+| PR Manager / Head of PR | "media relations", "press", "crisis communication", "spokesperson", "public relations", "PR strategy" |
+| Communications Director / Head of Comms | "corporate communications", "internal communications", "stakeholder", "communications strategy", "executive communications" |
+| Corporate Communications Manager | "brand", "press releases", "corporate messaging", "events", "media monitoring" |
+| Spokesperson / Press Secretary | "media briefings", "public statements", "government relations", "press office", "spokesperson" |
+| Public Affairs / Government Relations | "public affairs", "government", "regulatory", "policy", "institutional relations", "lobbying" |
+| Marketing & Communications Manager | "marketing", "campaigns", "social media", "content", "brand awareness", "digital communications" |
 
 After detecting archetype, read `modes/_profile.md` for the user's specific framing and proof points for that archetype.
 

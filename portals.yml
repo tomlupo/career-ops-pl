@@ -1,0 +1,360 @@
+# Portal Scanner Configuration
+# Tailored for Sara Wilczega -- PR & Communications Specialist
+# Focus: PR, Communications, Public Affairs roles in Poland and EU
+
+# -- Title filter --
+title_filter:
+  positive:
+    # -- PR/Communications roles (EN) --
+    - "PR"
+    - "Public Relations"
+    - "Communications"
+    - "Comms"
+    - "Spokesperson"
+    - "Press"
+    - "Media Relations"
+    - "Corporate Affairs"
+    - "Public Affairs"
+    - "Government Relations"
+    - "External Relations"
+    - "Internal Communications"
+    - "Crisis"
+    - "Reputation"
+    - "Content"
+    - "Social Media Manager"
+    - "Marketing Communications"
+    - "Brand Manager"
+    - "Editorial"
+    - "Copywriter"
+    # -- PR/Communications roles (PL) --
+    - "Rzecznik"
+    - "Komunikacja"
+    - "Relacje z mediami"
+    - "Relacje publiczne"
+    - "Biuro prasowe"
+    - "Specjalista ds. PR"
+    - "Specjalista ds. komunikacji"
+    - "Media"
+    - "Rzecznik prasowy"
+  negative:
+    - "Junior"
+    - "Intern"
+    - "Stażysta"
+    - "Praktykant"
+    - "Developer"
+    - "Engineer"
+    - "Programista"
+    - "DevOps"
+    - "QA"
+    - "Tester"
+    - "Data Analyst"
+    - "Accountant"
+    - "Księgowy"
+    - "Sales Rep"
+    - "Customer Service"
+    - "Graphic Designer"
+  seniority_boost:
+    - "Senior"
+    - "Head"
+    - "Director"
+    - "Lead"
+    - "Manager"
+    - "Dyrektor"
+    - "Kierownik"
+    - "Starszy"
+
+# -- Search queries --
+search_queries:
+
+  # -- Pracuj.pl (primary Polish portal) --
+  - name: Pracuj.pl — PR Manager
+    query: 'site:pracuj.pl "PR Manager" OR "Head of PR" OR "Public Relations Manager"'
+    enabled: true
+
+  - name: Pracuj.pl — Communications (EN)
+    query: 'site:pracuj.pl "Communications Manager" OR "Head of Communications" OR "Communications Director"'
+    enabled: true
+
+  - name: Pracuj.pl — PR Specialist (PL)
+    query: 'site:pracuj.pl "specjalista ds. PR" OR "specjalista ds. komunikacji" OR "rzecznik prasowy" OR "kierownik ds. komunikacji"'
+    enabled: true
+
+  - name: Pracuj.pl — Public Affairs
+    query: 'site:pracuj.pl "Public Affairs" OR "Government Relations" OR "relacje instytucjonalne" OR "Corporate Affairs"'
+    enabled: true
+
+  - name: Pracuj.pl — MarCom
+    query: 'site:pracuj.pl "Marketing Communications" OR "Brand Manager" OR "Social Media Manager" Warszawa OR remote'
+    enabled: true
+
+  # -- LinkedIn --
+  - name: LinkedIn — PR Manager Poland
+    query: 'site:linkedin.com/jobs "PR Manager" OR "Head of PR" OR "Public Relations Manager" Poland OR Warsaw'
+    enabled: true
+
+  - name: LinkedIn — Communications Director
+    query: 'site:linkedin.com/jobs "Communications Director" OR "Head of Communications" OR "VP Communications" Poland OR remote'
+    enabled: true
+
+  - name: LinkedIn — Corporate Comms
+    query: 'site:linkedin.com/jobs "Corporate Communications" OR "External Communications" OR "Internal Communications" Warsaw OR Poland'
+    enabled: true
+
+  - name: LinkedIn — Spokesperson & Press
+    query: 'site:linkedin.com/jobs "Spokesperson" OR "Press Officer" OR "Media Relations" Poland OR EU OR remote'
+    enabled: true
+
+  - name: LinkedIn — Public Affairs EU
+    query: 'site:linkedin.com/jobs "Public Affairs" OR "Government Relations" OR "EU Affairs" Brussels OR Warsaw OR Poland'
+    enabled: true
+
+  # -- Greenhouse (international companies) --
+  - name: Greenhouse — Communications
+    query: 'site:job-boards.greenhouse.io "Communications Manager" OR "Head of Communications" OR "PR Manager" Europe OR remote'
+    enabled: true
+
+  - name: Greenhouse — Public Affairs
+    query: 'site:job-boards.greenhouse.io "Public Affairs" OR "Government Relations" OR "Policy Communications" Europe OR remote'
+    enabled: true
+
+  # -- Ashby (tech companies with comms roles) --
+  - name: Ashby — Communications
+    query: 'site:jobs.ashbyhq.com "Communications" OR "PR" OR "Public Relations" Europe OR remote'
+    enabled: true
+
+  # -- Lever --
+  - name: Lever — Communications
+    query: 'site:jobs.lever.co "Communications Manager" OR "PR Manager" OR "Head of Communications" Europe OR remote'
+    enabled: true
+
+  # -- NoFluffJobs (Polish tech job portal) --
+  - name: NoFluffJobs — Communications
+    query: 'site:nofluffjobs.com "PR" OR "Communications" OR "Marketing" Warszawa OR remote'
+    enabled: true
+
+  # -- Indeed Poland --
+  - name: Indeed PL — PR
+    query: 'site:pl.indeed.com "PR Manager" OR "Communications Manager" OR "specjalista PR" Warszawa'
+    enabled: true
+
+  # -- Euractiv / EU institutions --
+  - name: EU Institutions — Communications
+    query: '"communications officer" OR "press officer" OR "spokesperson" site:epso.europa.eu OR site:eurobrussels.com OR site:euractiv.com/jobs'
+    enabled: true
+
+  # -- General cross-portal --
+  - name: Cross-portal — Head of Comms Poland
+    query: '"Head of Communications" OR "Communications Director" OR "Dyrektor ds. komunikacji" Warsaw OR Poland 2026'
+    enabled: true
+
+  - name: Cross-portal — Financial PR
+    query: '"financial PR" OR "investor relations" OR "capital markets communications" OR "IR Manager" Warsaw OR Poland OR remote'
+    enabled: true
+
+# -- Tracked companies --
+# Major Polish and international employers with strong comms teams
+
+tracked_companies:
+
+  # -- Polish Financial Institutions --
+
+  - name: Warsaw Stock Exchange (GPW)
+    careers_url: https://www.gpw.pl/kariera
+    scan_method: websearch
+    scan_query: '"Giełda Papierów Wartościowych" OR "GPW" kariera OR praca "komunikacja" OR "PR"'
+    notes: "Sara's former employer. Track for new openings in comms team."
+    enabled: true
+
+  - name: National Bank of Poland (NBP)
+    careers_url: https://www.nbp.pl/home.aspx?f=/kariera/kariera.html
+    scan_method: websearch
+    scan_query: 'site:nbp.pl kariera "komunikacja" OR "PR" OR "rzecznik"'
+    notes: "Central bank. Major institutional comms employer."
+    enabled: true
+
+  - name: PKO Bank Polski
+    careers_url: https://www.pkobp.pl/kariera/
+    scan_method: websearch
+    scan_query: 'site:pkobp.pl kariera "PR" OR "komunikacja" OR "media"'
+    notes: "Largest Polish bank. Large comms department."
+    enabled: true
+
+  - name: Bank Pekao
+    careers_url: https://www.pekao.com.pl/o-banku/kariera.html
+    scan_method: websearch
+    scan_query: '"Bank Pekao" kariera "PR" OR "komunikacja" OR "rzecznik"'
+    notes: "Major Polish bank."
+    enabled: true
+
+  # -- Polish Government & Institutions --
+
+  - name: Polish Investment & Trade Agency (PAIH)
+    careers_url: https://www.paih.gov.pl/kariera
+    scan_method: websearch
+    scan_query: 'site:paih.gov.pl kariera OR praca'
+    notes: "Sara's former employer. Investment promotion agency."
+    enabled: true
+
+  - name: Polish Financial Supervision Authority (KNF)
+    careers_url: https://www.knf.gov.pl/o_nas/kariera
+    scan_method: websearch
+    scan_query: 'site:knf.gov.pl kariera "komunikacja" OR "PR" OR "rzecznik"'
+    notes: "Financial regulator. Institutional comms."
+    enabled: true
+
+  # -- Polish Media & Tech --
+
+  - name: TVN / Warner Bros. Discovery
+    careers_url: https://careers.wbd.com/
+    scan_method: websearch
+    scan_query: '"Warner Bros Discovery" OR "TVN" Poland careers "communications" OR "PR" OR "marketing"'
+    notes: "Sara's former employer (TVN24). WBD is parent company."
+    enabled: true
+
+  - name: Allegro
+    careers_url: https://job-boards.greenhouse.io/allegro
+    api: https://boards-api.greenhouse.io/v1/boards/allegro/jobs
+    notes: "Largest Polish e-commerce. Listed on GPW. Large comms team."
+    enabled: true
+
+  - name: CD Projekt
+    careers_url: https://job-boards.greenhouse.io/cdprojektred
+    api: https://boards-api.greenhouse.io/v1/boards/cdprojektred/jobs
+    notes: "Polish gaming company. Listed on GPW. International PR team."
+    enabled: true
+
+  - name: InPost
+    careers_url: https://inpost.pl/kariera
+    scan_method: websearch
+    scan_query: '"InPost" kariera OR careers "PR" OR "communications" OR "komunikacja"'
+    notes: "Polish logistics unicorn. Listed on Euronext Amsterdam."
+    enabled: true
+
+  # -- International with Poland presence --
+
+  - name: Google Poland
+    careers_url: https://careers.google.com/
+    scan_method: websearch
+    scan_query: 'site:careers.google.com "communications" OR "public affairs" OR "PR" Poland OR Warsaw'
+    notes: "Major office in Warsaw. Policy & comms roles."
+    enabled: true
+
+  - name: Meta
+    careers_url: https://www.metacareers.com/
+    scan_method: websearch
+    scan_query: 'site:metacareers.com "communications" OR "public policy" OR "PR" Poland OR Warsaw OR Europe'
+    notes: "EU policy and comms roles."
+    enabled: true
+
+  - name: Amazon Poland
+    careers_url: https://www.amazon.jobs/
+    scan_method: websearch
+    scan_query: 'site:amazon.jobs "PR" OR "communications" OR "public policy" Poland OR Warsaw'
+    notes: "Large Poland operations. PR and public policy roles."
+    enabled: true
+
+  - name: Microsoft Poland
+    careers_url: https://careers.microsoft.com/
+    scan_method: websearch
+    scan_query: 'site:careers.microsoft.com "communications" OR "PR" OR "public affairs" Poland OR Warsaw'
+    notes: "Warsaw office. Corporate comms roles."
+    enabled: true
+
+  # -- EU/International Institutions --
+
+  - name: European Commission
+    careers_url: https://epso.europa.eu/
+    scan_method: websearch
+    scan_query: 'site:epso.europa.eu "communication" OR "press" OR "spokesperson"'
+    notes: "EU institutions. Contract agent and official positions."
+    enabled: true
+
+  - name: European Parliament
+    careers_url: https://www.europarl.europa.eu/recruitment/
+    scan_method: websearch
+    scan_query: '"European Parliament" careers "communication" OR "press officer" OR "spokesperson"'
+    notes: "EP comms and press roles."
+    enabled: true
+
+  # -- International PR/Comms-heavy companies --
+
+  - name: Edelman
+    careers_url: https://www.edelman.com/careers
+    scan_method: websearch
+    scan_query: 'site:edelman.com/careers Poland OR Warsaw OR Europe "senior" OR "manager" OR "director"'
+    notes: "Largest global PR firm. Warsaw office."
+    enabled: true
+
+  - name: Weber Shandwick
+    careers_url: https://www.webershandwick.com/careers/
+    scan_method: websearch
+    scan_query: '"Weber Shandwick" careers Poland OR Warsaw OR Europe "PR" OR "communications"'
+    notes: "Major global PR agency. European network."
+    enabled: true
+
+  - name: Burson (formerly BCW)
+    careers_url: https://www.burson.com/careers
+    scan_method: websearch
+    scan_query: '"Burson" careers Poland OR Warsaw OR Europe "PR" OR "communications" OR "public affairs"'
+    notes: "Global PR firm. Strong public affairs practice."
+    enabled: true
+
+  - name: Hill+Knowlton (now Burson)
+    careers_url: https://www.burson.com/careers
+    scan_method: websearch
+    scan_query: '"Hill Knowlton" OR "H+K" careers Poland OR Europe "communications" OR "public affairs"'
+    notes: "Merged into Burson. Track for legacy listings."
+    enabled: false
+
+  # -- Polish corporates with large comms teams --
+
+  - name: Orlen
+    careers_url: https://www.orlen.pl/pl/o-firmie/kariera
+    scan_method: websearch
+    scan_query: '"Orlen" kariera "PR" OR "komunikacja" OR "rzecznik" OR "media"'
+    notes: "Largest Polish company. Major comms operation."
+    enabled: true
+
+  - name: PZU
+    careers_url: https://www.pzu.pl/kariera
+    scan_method: websearch
+    scan_query: '"PZU" kariera "PR" OR "komunikacja" OR "rzecznik"'
+    notes: "Largest Polish insurer. GPW listed."
+    enabled: true
+
+  - name: KGHM
+    careers_url: https://kghm.com/kariera
+    scan_method: websearch
+    scan_query: '"KGHM" kariera "komunikacja" OR "PR" OR "rzecznik"'
+    notes: "Mining giant. GPW listed. International operations."
+    enabled: true
+
+  - name: PGNiG / Orlen Group
+    careers_url: https://www.orlen.pl/pl/o-firmie/kariera
+    scan_method: websearch
+    scan_query: '"PGNiG" OR "Orlen" kariera "komunikacja" OR "PR"'
+    notes: "Energy sector. Now part of Orlen Group."
+    enabled: false
+
+  - name: Cyfrowy Polsat / Polsat Plus
+    careers_url: https://kariera.polsatplus.pl/
+    scan_method: websearch
+    scan_query: '"Polsat" OR "Cyfrowy Polsat" kariera "PR" OR "komunikacja" OR "media"'
+    notes: "Major Polish media group."
+    enabled: true
+
+  # -- Consulting & advisory (comms practices) --
+
+  - name: Deloitte Poland
+    careers_url: https://apply.deloitte.com/
+    scan_method: websearch
+    scan_query: 'site:apply.deloitte.com "communications" OR "PR" OR "marketing" Poland OR Warsaw'
+    notes: "Big 4. Internal and client-facing comms roles."
+    enabled: true
+
+  - name: McKinsey Poland
+    careers_url: https://www.mckinsey.com/careers/
+    scan_method: websearch
+    scan_query: '"McKinsey" careers "communications" OR "editorial" Poland OR Warsaw'
+    notes: "Communications and knowledge roles."
+    enabled: true

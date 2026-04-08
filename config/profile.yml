@@ -1,0 +1,73 @@
+# Career-Ops Profile Configuration
+# Tailored for Sara Wilczega -- PR & Communications Specialist
+
+candidate:
+  full_name: "Sara Wilczega"
+  email: "sarakowalik@msn.com"
+  phone: "+48 503172888"
+  location: "Warsaw, Poland"
+  linkedin: ""
+  portfolio_url: ""
+  github: ""
+  twitter: ""
+
+target_roles:
+  primary:
+    - "PR Manager"
+    - "Head of Communications"
+    - "Communications Director"
+  archetypes:
+    - name: "PR Manager / Head of PR"
+      level: "Senior/Head"
+      fit: "primary"
+    - name: "Communications Director / Head of Communications"
+      level: "Senior/Director"
+      fit: "primary"
+    - name: "Corporate Communications Manager"
+      level: "Senior"
+      fit: "primary"
+    - name: "Spokesperson / Press Secretary"
+      level: "Senior"
+      fit: "secondary"
+    - name: "Public Affairs / Government Relations Manager"
+      level: "Senior"
+      fit: "secondary"
+    - name: "Marketing & Communications Manager"
+      level: "Mid-Senior"
+      fit: "adjacent"
+
+narrative:
+  headline: "PR & Communications leader with 10+ years managing high-stakes media strategies for capital markets and government"
+  exit_story: "Built GPW's international media presence through 5 years of crisis comms, government-level stakeholder management, and financial media relations. Now seeking a communications leadership role where strategic thinking and cross-border media expertise drive real organizational impact."
+  superpowers:
+    - "Crisis communication under pressure (financial markets, government, breaking news)"
+    - "International media relations across 4 languages (PL, EN, IT, FR)"
+    - "Government and institutional stakeholder management at the highest level"
+    - "Strategic communication design from concept to execution"
+    - "Live news production and event coordination at global scale"
+  proof_points:
+    - name: "Warsaw Stock Exchange PR Leadership"
+      url: ""
+      hero_metric: "5 years managing GPW Group image and crisis comms for Poland's primary stock exchange"
+    - name: "Prime Minister's Office Communications"
+      url: ""
+      hero_metric: "Coordinated PM media strategy for World Economic Forum Davos, EU summits, bilateral visits"
+    - name: "TVN24 World News Producer"
+      url: ""
+      hero_metric: "Managed foreign operations covering Paris attacks, Ukraine Crisis, NATO summits, G7"
+    - name: "PAIH Spokesperson Office"
+      url: ""
+      hero_metric: "Led agency-wide comms strategy for Poland's investment and trade promotion"
+
+compensation:
+  target_range: "18,000-25,000 PLN gross/month"
+  currency: "PLN"
+  minimum: "15,000 PLN gross/month"
+  location_flexibility: "Warsaw preferred, hybrid or remote possible, open to travel"
+
+location:
+  country: "Poland"
+  city: "Warsaw"
+  timezone: "CET"
+  visa_status: "EU citizen, no sponsorship needed"
+  onsite_availability: "Warsaw on-site or hybrid preferred, open to occasional travel within EU"

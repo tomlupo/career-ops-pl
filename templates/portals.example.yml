@@ -181,6 +181,36 @@ search_queries:
     query: '"Forward Deployed Engineer" OR "Deployed Engineer" OR "Deployment Engineer" AI site:job-boards.greenhouse.io OR site:jobs.ashbyhq.com OR site:jobs.lever.co'
     enabled: true
 
+  # -- LinkedIn --
+  - name: LinkedIn — AI Engineer
+    query: 'site:linkedin.com/jobs "AI Engineer" OR "LLM Engineer" OR "ML Engineer" remote'
+    enabled: true
+
+  - name: LinkedIn — Solutions Architect
+    query: 'site:linkedin.com/jobs "Solutions Architect" OR "Forward Deployed" AI OR automation remote'
+    enabled: true
+
+  - name: LinkedIn — AI PM
+    query: 'site:linkedin.com/jobs "AI Product Manager" OR "Senior Product Manager" AI remote'
+    enabled: true
+
+  - name: LinkedIn — Agentic & Automation
+    query: 'site:linkedin.com/jobs "Agentic" OR "AI Agent" OR "Automation Architect" OR "GTM Engineer" remote'
+    enabled: true
+
+  # -- Pracuj.pl (Polish job market) --
+  - name: Pracuj.pl — AI & ML
+    query: 'site:pracuj.pl "AI Engineer" OR "ML Engineer" OR "Machine Learning" OR "LLM" OR "Artificial Intelligence"'
+    enabled: true
+
+  - name: Pracuj.pl — Data & AI (PL)
+    query: 'site:pracuj.pl "sztuczna inteligencja" OR "uczenie maszynowe" OR "inżynier AI" OR "data scientist"'
+    enabled: true
+
+  - name: Pracuj.pl — Solutions & Platform
+    query: 'site:pracuj.pl "Solutions Architect" OR "Platform Engineer" OR "Solutions Engineer" OR "Automation"'
+    enabled: true
+
   # -- RemoteFront (aggregator) --
   - name: RemoteFront — AI & Automation
     query: 'site:remotefront.com "AI Engineer" OR "Solutions Engineer" OR "Automation" OR "LLM" OR "Agent" remote'
