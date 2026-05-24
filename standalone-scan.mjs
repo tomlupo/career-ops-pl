@@ -1,17 +1,15 @@
 #!/usr/bin/env node
 
 /**
- * standalone-scan.mjs — Headless portal scanner for career-ops
+ * standalone-scan.mjs — Career portal scanner for career-ops
  *
- * Runs without Claude. Reads portals.yml, scrapes career pages and APIs,
- * filters by title, deduplicates, and writes a markdown report.
+ * Reads portals.yml, routes each portal to the appropriate handler
+ * (API, cheerio, playwright, linkedin), filters by title, deduplicates,
+ * and writes a markdown report.
  *
  * Usage:
  *   node standalone-scan.mjs                          # report to stdout
  *   node standalone-scan.mjs --out /path/to/vault     # report to Obsidian vault
- *   node standalone-scan.mjs --out ./reports           # report to local dir
- *
- * The report filename is: career-scan-YYYY-MM-DD.md
  *
  * Environment variables:
  *   OBSIDIAN_VAULT  — default output directory (overridden by --out)
@@ -61,7 +59,7 @@ async function loadScanHistory() {
   if (!existsSync(histPath)) return new Set();
   const raw = await readFile(histPath, 'utf-8');
   const urls = new Set();
-  for (const line of raw.split('\n').slice(1)) { // skip header
+  for (const line of raw.split('\n').slice(1)) {
     const url = line.split('\t')[0];
     if (url) urls.add(url);
   }
@@ -84,155 +82,40 @@ async function loadPipelineUrls() {
 
 // ── Title filtering ───────────────────────────────────────────────────────
 
+function kwToRegex(kw) {
+  // If keyword contains regex metacharacters like \b, use as regex
+  // Otherwise treat as case-insensitive literal
+  if (kw.includes('\\b') || kw.includes('\\.') || kw.includes('\\s')) {
+    return new RegExp(kw, 'i');
+  }
+  // Escape special regex chars, then do case-insensitive includes
+  const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(escaped, 'i');
+}
+
 function matchesFilter(title, filter) {
-  const lower = title.toLowerCase();
-  const hasPositive = filter.positive.some(kw => lower.includes(kw.toLowerCase()));
-  const hasNegative = filter.negative.some(kw => lower.includes(kw.toLowerCase()));
+  const hasPositive = filter.positive.some(kw => kwToRegex(kw).test(title));
+  const hasNegative = filter.negative.some(kw => kwToRegex(kw).test(title));
   return hasPositive && !hasNegative;
 }
 
 function hasSeniorityBoost(title, filter) {
-  const lower = title.toLowerCase();
-  return (filter.seniority_boost || []).some(kw => lower.includes(kw.toLowerCase()));
+  return (filter.seniority_boost || []).some(kw => kwToRegex(kw).test(title));
 }
 
-// ── Greenhouse API scanner ────────────────────────────────────────────────
+// ── Scan method routing ──────────────────────────────────────────────────
 
-async function scanGreenhouseApi(company) {
-  const results = [];
-  try {
-    const resp = await fetch(company.api, {
-      headers: { 'Accept': 'application/json' },
-      signal: AbortSignal.timeout(15000),
-    });
-    if (!resp.ok) return results;
-
-    const data = await resp.json();
-    const jobs = data.jobs || data || [];
-
-    for (const job of jobs) {
-      const title = job.title || '';
-      const url = job.absolute_url || (job.url ? `https://job-boards.greenhouse.io${job.url}` : null);
-      if (title && url) {
-        results.push({
-          title,
-          url: url.split('?')[0], // strip tracking params
-          company: company.name,
-          source: `API: ${company.name}`,
-        });
-      }
-    }
-  } catch (err) {
-    console.error(`  [API] ${company.name}: ${err.message.split('\n')[0]}`);
-  }
-  return results;
-}
-
-// ── Playwright page scanner ───────────────────────────────────────────────
-
-async function scanWithPlaywright(browser, company) {
-  const results = [];
-  const page = await browser.newPage();
-
-  try {
-    await page.goto(company.careers_url, { waitUntil: 'domcontentloaded', timeout: 20000 });
-    await page.waitForTimeout(3000); // let SPAs hydrate
-
-    // Extract all links that look like job postings
-    const links = await page.evaluate(() => {
-      const anchors = document.querySelectorAll('a[href]');
-      const jobs = [];
-      for (const a of anchors) {
-        const href = a.href;
-        const text = (a.innerText || '').trim();
-        // Skip nav/footer links, keep links with meaningful text
-        if (!text || text.length < 5 || text.length > 200) continue;
-        if (/\.(css|js|png|jpg|svg)$/i.test(href)) continue;
-        jobs.push({ title: text, url: href });
-      }
-      return jobs;
-    });
-
-    // Filter: keep links that look like job listings (heuristic)
-    for (const link of links) {
-      const url = link.url.split('?')[0].replace(/\/$/, '');
-      // Common job URL patterns
-      const isJobUrl = /\/(jobs?|positions?|openings?|careers?|roles?)\//i.test(url)
-        || /greenhouse\.io|ashbyhq\.com|lever\.co|workable\.com|pracuj\.pl\/praca/i.test(url)
-        || /linkedin\.com\/jobs\/view/i.test(url);
-
-      if (isJobUrl && link.title.length > 5) {
-        results.push({
-          title: link.title.replace(/\n/g, ' ').trim(),
-          url,
-          company: company.name,
-          source: `Playwright: ${company.name}`,
-        });
-      }
-    }
-  } catch (err) {
-    console.error(`  [Playwright] ${company.name}: ${err.message.split('\n')[0]}`);
-  } finally {
-    await page.close();
-  }
-  return results;
-}
-
-// ── Pracuj.pl scraper ─────────────────────────────────────────────────────
-
-async function scanPracujPl(browser, keywords) {
-  const results = [];
-  const page = await browser.newPage();
-
-  // Build search URL from positive keywords (top 5 most relevant)
-  const searchTerms = keywords.slice(0, 5).join('%20OR%20');
-  const searchUrl = `https://www.pracuj.pl/praca/${encodeURIComponent(keywords[0])};kw?rd=30&wp=remote%2Cwarszawa`;
-
-  try {
-    await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 20000 });
-    await page.waitForTimeout(3000);
-
-    // Accept cookies if banner appears
-    try {
-      const cookieBtn = await page.$('[data-test="button-submitCookie"], #onetrust-accept-btn-handler');
-      if (cookieBtn) await cookieBtn.click();
-    } catch (_) { /* ignore */ }
-
-    await page.waitForTimeout(1000);
-
-    // Extract job listings
-    const jobs = await page.evaluate(() => {
-      const listings = [];
-      // Pracuj.pl uses data-test attributes and structured offer tiles
-      const offerLinks = document.querySelectorAll('a[href*="/praca/"]');
-      for (const a of offerLinks) {
-        const href = a.href;
-        const text = (a.innerText || '').trim();
-        if (href.includes(',oferta,') && text.length > 5 && text.length < 200) {
-          listings.push({ title: text.split('\n')[0].trim(), url: href.split('?')[0] });
-        }
-      }
-      return listings;
-    });
-
-    for (const job of jobs) {
-      // Try to extract company from URL pattern: /praca/title,company,id.html
-      const urlMatch = job.url.match(/\/praca\/[^,]+,([^,]+),/);
-      const company = urlMatch ? urlMatch[1].replace(/-/g, ' ') : 'Unknown';
-
-      results.push({
-        title: job.title,
-        url: job.url,
-        company,
-        source: 'Pracuj.pl',
-      });
-    }
-  } catch (err) {
-    console.error(`  [Pracuj.pl] ${err.message.split('\n')[0]}`);
-  } finally {
-    await page.close();
-  }
-  return results;
+function resolveScanMethod(company) {
+  // Explicit scan_method in config takes priority
+  if (company.scan_method === 'api' || company.api) return 'api';
+  if (company.scan_method === 'cheerio') return 'cheerio';
+  if (company.scan_method === 'linkedin') return 'linkedin';
+  if (company.scan_method === 'playwright') return 'playwright';
+  // Default: websearch entries use playwright
+  if (company.scan_method === 'websearch') return 'playwright';
+  // Fallback: if it has a careers_url, use playwright
+  if (company.careers_url) return 'playwright';
+  return 'skip';
 }
 
 // ── Dedup & history ───────────────────────────────────────────────────────
@@ -242,11 +125,11 @@ async function appendScanHistory(entries) {
   await mkdir(join(__dirname, 'data'), { recursive: true });
 
   if (!existsSync(histPath)) {
-    await writeFile(histPath, 'url\tfirst_seen\tportal\ttitle\tcompany\tstatus\n');
+    await writeFile(histPath, 'url\tfirst_seen\tportal\ttitle\tcompany\tlocation\twork_mode\tcontract\tstatus\n');
   }
 
   const lines = entries.map(e =>
-    `${e.url}\t${TODAY}\t${e.source}\t${e.title}\t${e.company}\t${e.status}`
+    `${e.url}\t${TODAY}\t${e.source}\t${e.title}\t${e.company}\t${e.location || ''}\t${e.workMode || ''}\t${e.contract || ''}\t${e.status}`
   );
   if (lines.length) {
     await appendFile(histPath, lines.join('\n') + '\n');
@@ -272,11 +155,14 @@ function generateReport(matched, filtered, duped, errors) {
 
   if (matched.length > 0) {
     lines.push('## New Offers', '');
-    lines.push('| Company | Role | Source | Link |');
-    lines.push('|---------|------|--------|------|');
+    lines.push('| Company | Role | Location | Mode | Contract | Link |');
+    lines.push('|---------|------|----------|------|----------|------|');
     for (const m of matched) {
       const senior = m.seniorityBoost ? ' *' : '';
-      lines.push(`| ${m.company} | ${m.title}${senior} | ${m.source} | [Open](${m.url}) |`);
+      const loc = m.location || '—';
+      const mode = m.workMode || '—';
+      const contract = m.contract || '—';
+      lines.push(`| ${m.company} | ${m.title}${senior} | ${loc} | ${mode} | ${contract} | [Open](${m.url}) |`);
     }
     lines.push('', '\\* = seniority match', '');
   } else {
@@ -318,50 +204,93 @@ async function main() {
   const allCandidates = [];
   const errors = [];
 
-  // ── Level 2: Greenhouse APIs (fast, no browser needed) ──
-  const apiCompanies = (config.tracked_companies || []).filter(c => c.enabled && c.api);
+  const companies = (config.tracked_companies || []).filter(c => c.enabled);
+
+  // Group by scan method
+  const apiCompanies = [];
+  const cheerioCompanies = [];
+  const playwrightCompanies = [];
+  let hasLinkedin = false;
+
+  for (const c of companies) {
+    const method = resolveScanMethod(c);
+    if (method === 'api') apiCompanies.push(c);
+    else if (method === 'cheerio') cheerioCompanies.push(c);
+    else if (method === 'playwright') playwrightCompanies.push(c);
+    else if (method === 'linkedin') { hasLinkedin = true; }
+  }
+
+  // ── Phase 1: API scanners (fast, no browser) ──
   if (apiCompanies.length) {
     console.log(`[API] Scanning ${apiCompanies.length} Greenhouse APIs...`);
-    const apiResults = await Promise.all(apiCompanies.map(c => scanGreenhouseApi(c)));
-    for (const batch of apiResults) allCandidates.push(...batch);
+    const { scan } = await import('./scanners/greenhouse-api.mjs');
+    const results = await Promise.all(apiCompanies.map(c => scan(c)));
+    for (const batch of results) allCandidates.push(...batch);
     console.log(`[API] Found ${allCandidates.length} listings\n`);
   }
 
-  // ── Level 1: Playwright scraping ──
-  let browser;
-  try {
-    const { chromium } = await import('playwright');
-    browser = await chromium.launch({ headless: true });
+  // ── Phase 2: Cheerio scanners (fast, no browser) ──
+  if (cheerioCompanies.length) {
+    console.log(`[Cheerio] Scanning ${cheerioCompanies.length} static pages...`);
+    const { scan } = await import('./scanners/cheerio-scraper.mjs');
+    const results = await Promise.all(cheerioCompanies.map(c => scan(c)));
+    let count = 0;
+    for (const batch of results) { allCandidates.push(...batch); count += batch.length; }
+    console.log(`[Cheerio] Found ${count} listings\n`);
+  }
 
-    // Scrape tracked companies with careers_url (no API)
-    const playwrightCompanies = (config.tracked_companies || [])
-      .filter(c => c.enabled && c.careers_url && !c.api);
+  // ── Phase 3: Playwright SPA scanners ──
+  if (playwrightCompanies.length) {
+    console.log(`[Playwright] Scanning ${playwrightCompanies.length} career pages...`);
+    const pw = await import('./scanners/playwright-spa.mjs');
 
-    if (playwrightCompanies.length) {
-      console.log(`[Playwright] Scanning ${playwrightCompanies.length} career pages...`);
-      // Sequential -- avoid overwhelming targets
+    try {
+      await pw.initBrowser();
+
+      // Sequential to avoid overwhelming VPS
       for (const company of playwrightCompanies) {
         process.stdout.write(`  ${company.name}...`);
-        const results = await scanWithPlaywright(browser, company);
-        allCandidates.push(...results);
-        console.log(` ${results.length} listings`);
+        try {
+          const results = await pw.scan(company);
+          allCandidates.push(...results);
+          console.log(` ${results.length} listings`);
+        } catch (err) {
+          const msg = `${company.name}: ${err.message?.split('\n')[0] || err}`;
+          errors.push(msg);
+          console.log(` ERROR`);
+        }
       }
-      console.log('');
+    } finally {
+      await pw.closeBrowser();
     }
+    console.log('');
+  }
 
-    // Pracuj.pl direct scrape with PR/comms keywords
-    const prKeywords = (filter.positive || []).slice(0, 8);
-    if (prKeywords.length) {
-      console.log('[Pracuj.pl] Scanning with title keywords...');
-      const pracujResults = await scanPracujPl(browser, prKeywords);
-      allCandidates.push(...pracujResults);
-      console.log(`[Pracuj.pl] Found ${pracujResults.length} listings\n`);
+  // ── Phase 4: LinkedIn ──
+  // Disabled by default: anonymous scraping returns 999 as of 2026-04.
+  // Set linkedin_enabled: true in portals.yml to force-enable.
+  if (config.linkedin_enabled === true) {
+    console.log('[LinkedIn] Scanning public job listings...');
+    try {
+      const { scan } = await import('./scanners/linkedin-scraper.mjs');
+      const keywords = (filter.positive || [])
+        .filter(kw => kw.length > 3) // skip short keywords like "PR"
+        .slice(0, 5);
+
+      if (keywords.length) {
+        const results = await scan({
+          keywords,
+          location: 'Poland',
+          limit: 20,
+        });
+        allCandidates.push(...results);
+        console.log(`[LinkedIn] Found ${results.length} listings\n`);
+      }
+    } catch (err) {
+      const msg = `LinkedIn: ${err.message?.split('\n')[0] || err}`;
+      errors.push(msg);
+      console.error(`[LinkedIn] ${msg}\n`);
     }
-  } catch (err) {
-    errors.push(`Playwright: ${err.message.split('\n')[0]}`);
-    console.error(`[Playwright] Failed: ${err.message.split('\n')[0]}\n`);
-  } finally {
-    if (browser) await browser.close();
   }
 
   // ── Dedup by URL ──
@@ -400,6 +329,32 @@ async function main() {
     return a.company.localeCompare(b.company);
   });
 
+  // ── Phase 5: Content-based filtering using title + metadata ──
+  // Pracuj.pl individual pages are Cloudflare-protected, so we filter
+  // using the card metadata we already have (title, company, location, mode)
+  const contentRejectPatterns = [
+    /komunikacj[ię] satelitarn/i,     // satellite communications, not PR
+    /komunikacj[ię] CRM/i,            // CRM comms, not PR
+    /komunikacj[ię] sprzedaży/i,      // sales comms
+    /komunikacj[ię] katalog/i,        // catalog comms
+    /Analityk Kredytowy/i,             // credit analyst
+    /Bankowości Elektronicznej/i,      // e-banking
+    /dokumentacji IT/i,                // IT documentation
+    /administracji i komunikacji/i,    // admin + comms combo
+    /biura i wsparcia/i,              // office support
+  ];
+
+  for (let i = matched.length - 1; i >= 0; i--) {
+    const offer = matched[i];
+    const isContentReject = contentRejectPatterns.some(p => p.test(offer.title));
+    if (isContentReject) {
+      const rej = matched.splice(i, 1)[0];
+      filtered.push(rej);
+      const histEntry = historyEntries.find(h => h.url === rej.url);
+      if (histEntry) histEntry.status = 'skipped_content';
+    }
+  }
+
   // ── Write scan history ──
   await appendScanHistory(historyEntries);
 
@@ -418,8 +373,6 @@ async function main() {
 
   // ── Summary ──
   console.log(`\nDone: ${matched.length} new, ${duped.length} duped, ${filtered.length} filtered, ${errors.length} errors`);
-
-  if (matched.length === 0) process.exit(0);
   process.exit(0);
 }
 

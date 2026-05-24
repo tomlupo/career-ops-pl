@@ -4,48 +4,46 @@
 
 # -- Title filter --
 title_filter:
+  # Keywords use word-boundary matching (regex \bKEYWORD\b)
+  # to avoid false positives like "PR" matching "Projektant"
   positive:
     # -- PR/Communications roles (EN) --
-    - "PR"
+    - "\\bPR\\b"
     - "Public Relations"
     - "Communications"
-    - "Comms"
-    - "Spokesperson"
-    - "Press"
+    - "\\bComms\\b"
     - "Media Relations"
     - "Corporate Affairs"
     - "Public Affairs"
     - "Government Relations"
     - "External Relations"
     - "Internal Communications"
-    - "Crisis"
+    - "Crisis Communication"
     - "Reputation"
-    - "Content"
-    - "Social Media Manager"
-    - "Marketing Communications"
-    - "Brand Manager"
     - "Editorial"
-    - "Copywriter"
+    - "Press Officer"
     # -- PR/Communications roles (PL) --
-    - "Rzecznik"
-    - "Komunikacja"
+    - "ds\\. komunikacji"
+    - "Komunikacji Korporacyjnej"
+    - "Komunikacji Zewn"
+    - "Komunikacji Wewn"
     - "Relacje z mediami"
     - "Relacje publiczne"
     - "Biuro prasowe"
-    - "Specjalista ds. PR"
-    - "Specjalista ds. komunikacji"
-    - "Media"
-    - "Rzecznik prasowy"
+    - "ds\\. PR"
+    - "public relations"
   negative:
     - "Junior"
     - "Intern"
-    - "Stażysta"
+    - "Stażyst"
     - "Praktykant"
+    - "Praktyki"
+    - "Staż "
     - "Developer"
     - "Engineer"
     - "Programista"
     - "DevOps"
-    - "QA"
+    - "\\bQA\\b"
     - "Tester"
     - "Data Analyst"
     - "Accountant"
@@ -53,6 +51,29 @@ title_filter:
     - "Sales Rep"
     - "Customer Service"
     - "Graphic Designer"
+    - "Spokesperson"
+    - "Rzecznik"
+    - "Marketing Manager"
+    - "Marketing Specialist"
+    - "Brand Manager"
+    - "Social Media Manager"
+    - "Copywriter"
+    - "Content Creator"
+    - "\\bSEO\\b"
+    - "Performance Marketing"
+    - "Influencer"
+    - "Kierowca"
+    - "Mechanik"
+    - "Elektryk"
+    - "autobus"
+    - "Trainee"
+    - "Employer Branding"
+    - "Analityk Kredytowy"
+    - "Technical Sales"
+    - "promocji książek"
+    - "Google Ads"
+    - "Meta Ads"
+    - "\\bUX\\b"
   seniority_boost:
     - "Senior"
     - "Head"
@@ -160,28 +181,28 @@ tracked_companies:
 
   - name: Warsaw Stock Exchange (GPW)
     careers_url: https://www.gpw.pl/kariera
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"Giełda Papierów Wartościowych" OR "GPW" kariera OR praca "komunikacja" OR "PR"'
     notes: "Sara's former employer. Track for new openings in comms team."
     enabled: true
 
   - name: National Bank of Poland (NBP)
     careers_url: https://www.nbp.pl/home.aspx?f=/kariera/kariera.html
-    scan_method: websearch
+    scan_method: playwright
     scan_query: 'site:nbp.pl kariera "komunikacja" OR "PR" OR "rzecznik"'
     notes: "Central bank. Major institutional comms employer."
     enabled: true
 
   - name: PKO Bank Polski
     careers_url: https://www.pkobp.pl/kariera/
-    scan_method: websearch
+    scan_method: playwright
     scan_query: 'site:pkobp.pl kariera "PR" OR "komunikacja" OR "media"'
     notes: "Largest Polish bank. Large comms department."
     enabled: true
 
   - name: Bank Pekao
     careers_url: https://www.pekao.com.pl/o-banku/kariera.html
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"Bank Pekao" kariera "PR" OR "komunikacja" OR "rzecznik"'
     notes: "Major Polish bank."
     enabled: true
@@ -190,14 +211,14 @@ tracked_companies:
 
   - name: Polish Investment & Trade Agency (PAIH)
     careers_url: https://www.paih.gov.pl/kariera
-    scan_method: websearch
+    scan_method: playwright
     scan_query: 'site:paih.gov.pl kariera OR praca'
     notes: "Sara's former employer. Investment promotion agency."
     enabled: true
 
   - name: Polish Financial Supervision Authority (KNF)
     careers_url: https://www.knf.gov.pl/o_nas/kariera
-    scan_method: websearch
+    scan_method: playwright
     scan_query: 'site:knf.gov.pl kariera "komunikacja" OR "PR" OR "rzecznik"'
     notes: "Financial regulator. Institutional comms."
     enabled: true
@@ -206,7 +227,7 @@ tracked_companies:
 
   - name: TVN / Warner Bros. Discovery
     careers_url: https://careers.wbd.com/
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"Warner Bros Discovery" OR "TVN" Poland careers "communications" OR "PR" OR "marketing"'
     notes: "Sara's former employer (TVN24). WBD is parent company."
     enabled: true
@@ -220,12 +241,12 @@ tracked_companies:
   - name: CD Projekt
     careers_url: https://job-boards.greenhouse.io/cdprojektred
     api: https://boards-api.greenhouse.io/v1/boards/cdprojektred/jobs
-    notes: "Polish gaming company. Listed on GPW. International PR team."
-    enabled: true
+    notes: "Polish gaming company. Greenhouse board no longer active (404 as of 2026-04)."
+    enabled: false
 
   - name: InPost
     careers_url: https://inpost.pl/kariera
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"InPost" kariera OR careers "PR" OR "communications" OR "komunikacja"'
     notes: "Polish logistics unicorn. Listed on Euronext Amsterdam."
     enabled: true
@@ -234,74 +255,74 @@ tracked_companies:
 
   - name: Google Poland
     careers_url: https://careers.google.com/
-    scan_method: websearch
+    scan_method: playwright
     scan_query: 'site:careers.google.com "communications" OR "public affairs" OR "PR" Poland OR Warsaw'
-    notes: "Major office in Warsaw. Policy & comms roles."
-    enabled: true
+    notes: "Major office in Warsaw. Policy & comms roles. DISABLED: SPA returns empty shell, needs API scraper."
+    enabled: false
 
   - name: Meta
     careers_url: https://www.metacareers.com/
-    scan_method: websearch
+    scan_method: playwright
     scan_query: 'site:metacareers.com "communications" OR "public policy" OR "PR" Poland OR Warsaw OR Europe'
-    notes: "EU policy and comms roles."
-    enabled: true
+    notes: "EU policy and comms roles. DISABLED: React SPA returns empty content."
+    enabled: false
 
   - name: Amazon Poland
     careers_url: https://www.amazon.jobs/
-    scan_method: websearch
+    scan_method: playwright
     scan_query: 'site:amazon.jobs "PR" OR "communications" OR "public policy" Poland OR Warsaw'
-    notes: "Large Poland operations. PR and public policy roles."
-    enabled: true
+    notes: "Large Poland operations. PR and public policy roles. DISABLED: SPA, generic scraper returns 0 results."
+    enabled: false
 
   - name: Microsoft Poland
     careers_url: https://careers.microsoft.com/
-    scan_method: websearch
+    scan_method: playwright
     scan_query: 'site:careers.microsoft.com "communications" OR "PR" OR "public affairs" Poland OR Warsaw'
-    notes: "Warsaw office. Corporate comms roles."
-    enabled: true
+    notes: "Warsaw office. Corporate comms roles. DISABLED: redirects + SPA, returns empty."
+    enabled: false
 
   # -- EU/International Institutions --
 
   - name: European Commission
     careers_url: https://epso.europa.eu/
-    scan_method: websearch
+    scan_method: playwright
     scan_query: 'site:epso.europa.eu "communication" OR "press" OR "spokesperson"'
-    notes: "EU institutions. Contract agent and official positions."
-    enabled: true
+    notes: "EU institutions. Contract agent and official positions. DISABLED: redirected to eu-careers.europa.eu, SPA."
+    enabled: false
 
   - name: European Parliament
     careers_url: https://www.europarl.europa.eu/recruitment/
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"European Parliament" careers "communication" OR "press officer" OR "spokesperson"'
-    notes: "EP comms and press roles."
-    enabled: true
+    notes: "EP comms and press roles. DISABLED: SPA, returns empty."
+    enabled: false
 
   # -- International PR/Comms-heavy companies --
 
   - name: Edelman
     careers_url: https://www.edelman.com/careers
-    scan_method: websearch
+    scan_method: playwright
     scan_query: 'site:edelman.com/careers Poland OR Warsaw OR Europe "senior" OR "manager" OR "director"'
-    notes: "Largest global PR firm. Warsaw office."
-    enabled: true
+    notes: "Largest global PR firm. Warsaw office. DISABLED: 403 blocked by WAF."
+    enabled: false
 
   - name: Weber Shandwick
     careers_url: https://www.webershandwick.com/careers/
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"Weber Shandwick" careers Poland OR Warsaw OR Europe "PR" OR "communications"'
-    notes: "Major global PR agency. European network."
-    enabled: true
+    notes: "Major global PR agency. European network. DISABLED: SPA search form only, no scrapeable listings."
+    enabled: false
 
   - name: Burson (formerly BCW)
     careers_url: https://www.burson.com/careers
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"Burson" careers Poland OR Warsaw OR Europe "PR" OR "communications" OR "public affairs"'
-    notes: "Global PR firm. Strong public affairs practice."
-    enabled: true
+    notes: "Global PR firm. Strong public affairs practice. DISABLED: SSL cert invalid."
+    enabled: false
 
   - name: Hill+Knowlton (now Burson)
     careers_url: https://www.burson.com/careers
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"Hill Knowlton" OR "H+K" careers Poland OR Europe "communications" OR "public affairs"'
     notes: "Merged into Burson. Track for legacy listings."
     enabled: false
@@ -310,51 +331,160 @@ tracked_companies:
 
   - name: Orlen
     careers_url: https://www.orlen.pl/pl/o-firmie/kariera
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"Orlen" kariera "PR" OR "komunikacja" OR "rzecznik" OR "media"'
-    notes: "Largest Polish company. Major comms operation."
-    enabled: true
+    notes: "Largest Polish company. Major comms operation. DISABLED: SPA, returns empty."
+    enabled: false
 
   - name: PZU
     careers_url: https://www.pzu.pl/kariera
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"PZU" kariera "PR" OR "komunikacja" OR "rzecznik"'
-    notes: "Largest Polish insurer. GPW listed."
-    enabled: true
+    notes: "Largest Polish insurer. GPW listed. DISABLED: timeout on page load."
+    enabled: false
 
   - name: KGHM
     careers_url: https://kghm.com/kariera
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"KGHM" kariera "komunikacja" OR "PR" OR "rzecznik"'
-    notes: "Mining giant. GPW listed. International operations."
-    enabled: true
+    notes: "Mining giant. GPW listed. International operations. DISABLED: SPA, returns empty."
+    enabled: false
 
   - name: PGNiG / Orlen Group
     careers_url: https://www.orlen.pl/pl/o-firmie/kariera
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"PGNiG" OR "Orlen" kariera "komunikacja" OR "PR"'
     notes: "Energy sector. Now part of Orlen Group."
     enabled: false
 
   - name: Cyfrowy Polsat / Polsat Plus
     careers_url: https://kariera.polsatplus.pl/
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"Polsat" OR "Cyfrowy Polsat" kariera "PR" OR "komunikacja" OR "media"'
-    notes: "Major Polish media group."
-    enabled: true
+    notes: "Major Polish media group. DISABLED: SSL cert invalid."
+    enabled: false
 
   # -- Consulting & advisory (comms practices) --
 
   - name: Deloitte Poland
     careers_url: https://apply.deloitte.com/
-    scan_method: websearch
+    scan_method: playwright
     scan_query: 'site:apply.deloitte.com "communications" OR "PR" OR "marketing" Poland OR Warsaw'
     notes: "Big 4. Internal and client-facing comms roles."
     enabled: true
 
   - name: McKinsey Poland
     careers_url: https://www.mckinsey.com/careers/
-    scan_method: websearch
+    scan_method: playwright
     scan_query: '"McKinsey" careers "communications" OR "editorial" Poland OR Warsaw'
-    notes: "Communications and knowledge roles."
+    notes: "Communications and knowledge roles. DISABLED: HTTP2 protocol error."
+    enabled: false
+
+  # -- Job boards (direct scraping) --
+
+  - name: Pracuj.pl — PR & Communications
+    careers_url: https://www.pracuj.pl/praca/pr;kw/warszawa;wp?rd=30
+    scan_method: playwright
+    notes: "Primary Polish job board. Direct search for PR roles in Warsaw + remote."
     enabled: true
+
+  - name: Pracuj.pl — Komunikacja
+    careers_url: https://www.pracuj.pl/praca/komunikacja;kw/warszawa;wp?rd=30
+    scan_method: playwright
+    notes: "Polish-language comms search on Pracuj."
+    enabled: true
+
+  - name: LinkedIn Jobs — PR Communications Poland
+    careers_url: https://www.linkedin.com/jobs/search/?keywords=PR%20communications&location=Poland&f_TPR=r604800
+    scan_method: playwright
+    notes: "LinkedIn returns 999 for all anonymous requests as of 2026-04. DISABLED."
+    enabled: false
+
+  - name: PRoto.pl
+    careers_url: https://www.proto.pl/praca
+    scan_method: playwright
+    notes: "Polish PR industry portal — niche job board specifically for PR/comms."
+    enabled: true
+
+  - name: EuroBrussels
+    careers_url: https://www.eurobrussels.com/job_search?field=Communications%20/%20Press
+    scan_method: cheerio
+    notes: "EU affairs job aggregator. Press/comms filter. Sara's Brussels experience."
+    enabled: true
+
+  - name: NoFluffJobs — PR & Communications
+    careers_url: https://nofluffjobs.com/pl/praca-zdalna/marketing?criteria=seniority%3Dmid,senior
+    scan_method: playwright
+    notes: "Polish tech job board. Mid/senior marketing category includes comms."
+    enabled: true
+
+  # -- UN/International orgs (Italian advantage) --
+
+  - name: FAO Rome
+    careers_url: https://jobs.fao.org/careersection/fao_external/jobsearch.ftl
+    scan_method: playwright
+    scan_query: 'site:jobs.fao.org "communication" OR "public information" OR "media"'
+    notes: "UN Food & Agriculture (Rome). Sara's Italian C2 is a major asset. DISABLED: complex SPA, returns empty."
+    enabled: false
+
+  - name: OECD Careers
+    careers_url: https://www.oecd.org/en/about/careers.html
+    scan_method: playwright
+    scan_query: 'site:oecd.org careers "communications" OR "public affairs" OR "media relations"'
+    notes: "International org. Comms roles. DISABLED: SPA, returned only 'Explore job opportunities' text."
+    enabled: false
+
+  # -- Italian connection companies (Sara's Italian C2) --
+
+  - name: UniCredit (Bank Pekao parent)
+    careers_url: https://www.unicreditgroup.eu/en/careers.html
+    scan_method: playwright
+    scan_query: '"UniCredit" careers "communications" OR "PR" OR "media relations" Poland OR Warsaw OR Europe'
+    notes: "Italian bank, parent of Bank Pekao. Sara's Italian + financial comms. DISABLED: SPA, returns empty."
+    enabled: false
+
+  - name: Italian Trade Agency (ICE) Warsaw
+    careers_url: https://www.ice.it/en/job-opportunities
+    scan_method: playwright
+    scan_query: '"Italian Trade Agency" OR "ICE" Warsaw OR Poland careers'
+    notes: "Italian government trade agency. Sara speaks Italian C2. DISABLED: SPA, returns empty."
+    enabled: false
+
+  # -- Additional Big 4 & consulting --
+
+  - name: PwC Poland
+    careers_url: https://www.pwc.pl/pl/kariera.html
+    scan_method: playwright
+    scan_query: 'site:pwc.pl kariera "komunikacja" OR "PR" OR "marketing communications"'
+    notes: "Big 4. MarCom and internal comms roles. DISABLED: SPA, returns empty."
+    enabled: false
+
+  - name: EY Poland
+    careers_url: https://careers.ey.com/
+    scan_method: playwright
+    scan_query: 'site:careers.ey.com "communications" OR "PR" Poland OR Warsaw'
+    notes: "Big 4. Brand and comms roles. DISABLED: SPA, returns empty."
+    enabled: false
+
+  # -- Additional Polish banks --
+
+  - name: mBank
+    careers_url: https://www.mbank.pl/kariera/
+    scan_method: playwright
+    scan_query: '"mBank" kariera "PR" OR "komunikacja" OR "media"'
+    notes: "Major Polish bank. Commerzbank group. DISABLED: SPA, returns empty."
+    enabled: false
+
+  - name: Santander Poland
+    careers_url: https://www.santander.pl/kariera
+    scan_method: playwright
+    scan_query: '"Santander" Poland kariera "PR" OR "komunikacja" OR "communications"'
+    notes: "International bank with large Poland operations. DISABLED: SPA, returns empty."
+    enabled: false
+
+  - name: ING Poland
+    careers_url: https://www.ing.pl/kariera
+    scan_method: playwright
+    scan_query: '"ING" Poland kariera "PR" OR "komunikacja" OR "communications"'
+    notes: "Dutch bank, large Polish presence. DISABLED: SPA, returns empty."
+    enabled: false
